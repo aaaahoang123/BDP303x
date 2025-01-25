@@ -1,0 +1,16 @@
+{
+  "name": "lab1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "devDependencies": {
+    "chai": "^5.1.2",
+    "mocha": "^11.1.0"
+  }
+}
