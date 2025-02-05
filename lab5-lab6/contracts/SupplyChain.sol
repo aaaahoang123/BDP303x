@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-contract SupplyChain {
-    constructor() {}
-}
+//contract SupplyChain {
+//    constructor() {}
+//}
 
-contract supplyChain {
+contract SupplyChain {
     uint32 public product_id = 0; // Product ID
     uint32 public participant_id = 0; // Participant ID
     uint32 public owner_id = 0; // Ownership ID
