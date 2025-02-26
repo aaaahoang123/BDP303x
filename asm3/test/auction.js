@@ -197,6 +197,63 @@ contract('AuctionContract', function (accounts) {
     });
   });
 
+  describe('Announce from new contract', () => {
+    let contract;
+    before(async () => {
+      contract = await Auction.new(50, 5, { from: accounts[0] });
+    });
+
+    it('should not announce when state is not started', async () => {
+      try {
+        await contract.announce({ from: accounts[0] });
+        assert(false, 'Can not anounce when state is not started');
+      } catch (e) {
+        assert(e.reason === 'Current state is not started');
+      }
+    });
+
+    it('should started', async () => {
+      // Giả sử phần hàm start và register đã test bên trên bằng hàm này.
+      await contract.register(accounts[1], 100, { from: accounts[0] });
+      await contract.register(accounts[2], 100, { from: accounts[0] });
+      await contract.register(accounts[3], 100, { from: accounts[0] });
+
+      await contract.startSession();
+
+      await contract.bid(55, {from: accounts[2]});
+      await contract.bid(60, {from: accounts[3]});
+    })
+
+    it('should not announce by non-Auctioneer', async () => {
+      try {
+        await contract.announce({ from: accounts[2] });
+        assert(false, 'should not announce by non-Auctioneer');
+      } catch (e) {
+        assert(e.reason === 'Only auctioneer can do this action');
+      }
+    });
+    it('should announce 4 times by auctioneer', async () => {
+      await contract.announce({ from: accounts[0] });
+      await contract.announce({ from: accounts[0] });
+      await contract.announce({ from: accounts[0] });
+      await contract.announce({ from: accounts[0] });
+
+      const status = await contract.state();
+      const currentWinner = await contract.currentWinner();
+      console.log(status, currentWinner);
+      assert.equal(status.toNumber(), STATE.CLOSING);
+      assert.equal(currentWinner, accounts[3]);
+    });
+    it('should not be announce when state changed to Closing', async () => {
+      try {
+        await contract.announce({ from: accounts[0] });
+        assert(false, 'Can not anounce when state is not started');
+      } catch (e) {
+        assert(e.reason === 'Current state is not started');
+      }
+    });
+  })
+
   describe('Non-winner bidders should able to getDeposit', () => {
     it('should not allow getDeposit by non-bidder', async () => {
       try {
